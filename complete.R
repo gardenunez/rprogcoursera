@@ -13,5 +13,22 @@ complete <- function(directory, id = 1:332){
   ## ...
   ## where 'id' is the monitor ID number and 'nobs' is the
   ## number of complete cases 
-  
+  filenames <- list.files(path = directory, 
+                          pattern = "*.csv",
+                          full.names=TRUE)
+  result <- data.frame("id" = numeric(), "nobs" = numeric())
+  for(i in id){
+    for(current in filenames){
+      df <- read.csv(current)
+      name <- df[1,4]
+      if(name == i)
+        {
+          sdf <- subset(df, !is.na(df$sulfate))
+          n <- nrow(subset(sdf, !is.na(sdf$nitrate)))
+          result <- rbind(result, data.frame("id" = df[1,4], "nobs" = n))
+      }
+      
+    }
+  }
+  result
 }
