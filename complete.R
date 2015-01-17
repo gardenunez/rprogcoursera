@@ -1,3 +1,4 @@
+source('utils.R')
 complete <- function(directory, id = 1:332){
   ## 'directory' is a character vector of length 1 indicating
   ## the location of the csv files
@@ -17,18 +18,12 @@ complete <- function(directory, id = 1:332){
                           pattern = "*.csv",
                           full.names=TRUE)
   result <- data.frame("id" = numeric(), "nobs" = numeric())
+  data <- joindf(directory)
   for(i in id){
-    for(current in filenames){
-      df <- read.csv(current)
-      name <- df[1,4]
-      if(name == i)
-        {
-          sdf <- subset(df, !is.na(df$sulfate))
-          n <- nrow(subset(sdf, !is.na(sdf$nitrate)))
-          result <- rbind(result, data.frame("id" = df[1,4], "nobs" = n))
-      }
-      
-    }
+      df <- subset(data, ID == i)
+      sdf <- subset(df, !is.na(df$sulfate))
+      n <- nrow(subset(sdf, !is.na(sdf$nitrate)))
+      result <- rbind(result, data.frame("id" = i, "nobs" = n))
   }
   result
 }
